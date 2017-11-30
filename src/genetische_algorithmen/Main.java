@@ -7,7 +7,7 @@ public class Main {
 		/* maxFitness is maximum fitness of current population - meaning best matched string
 		 * fitnessThreshold is number of bits in optimum string
 		 * */
-		GeneticAlgorithm geneticAlg = new GeneticAlgorithm(100, 0.35, 0.8, "101010001110101", 15);
+		GeneticAlgorithm geneticAlg = new GeneticAlgorithm(100, 0.25, 0.015, "1011101000", 10);
 		int generationCount = 0;
 		do {
 			geneticAlg.evolvePopluation();

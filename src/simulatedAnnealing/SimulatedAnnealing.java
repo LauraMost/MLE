@@ -73,16 +73,18 @@ public class SimulatedAnnealing {
 			double currentDistance = getRoundtripDistance()*-1;
 			double randNumber = Math.random();
 			
+			double probability = Math.exp((currentDistance-optimalDistance)/temperature);
 					
 			if(currentDistance > optimalDistance) {
 				optimalDistance = currentDistance;
 				System.out.format("%f: %.2f%n", temperature, optimalDistance*-1);
 				
-			}else if(randNumber < Math.exp((currentDistance-optimalDistance)/temperature)) {
+			}else if(randNumber < probability) {
 				
-				System.out.format("%f: %.2f\t %f %f%n", temperature, currentDistance*-1, randNumber, Math.exp((currentDistance-optimalDistance)/temperature));
+				System.out.format("%f: %.2f\t %f %f%n", temperature, currentDistance*-1, randNumber, probability);
 				optimalDistance = currentDistance;
 			}else {
+				System.out.println(randNumber +" "+ probability);
 				swapCities(cityA, cityB);
 			}
 			
