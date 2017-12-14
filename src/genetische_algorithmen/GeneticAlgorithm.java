@@ -24,21 +24,22 @@ public class GeneticAlgorithm {
 	
 	
 	/**
-	 * @param p size of population
-	 * @param r crossover rate per generation
-	 * @param m mutation rate per generation
-	 * @param o optimum gene, that should be discovered 
+	 * setup genetic algorithm
+	 * @param populationsize size of population
+	 * @param crossoverrate crossover rate per generation
+	 * @param mutationrate mutation rate per generation
+	 * @param optimum optimum gene, that should be discovered 
 	 * @param maxLength maximum length of genes
 	 */
-	public GeneticAlgorithm(int p, double r, double m, String o, int maxLength) {
-		populationSize = p;
-		crossoverrate = r;
-		mutationrate = m;
-		optimumString = o;
+	public GeneticAlgorithm(int populationsize, double crossoverrate, double mutationrate, String optimum, int maxLength) {
+		this.populationSize = populationsize;
+		this.crossoverrate = crossoverrate;
+		this.mutationrate = mutationrate;
+		optimumString = optimum;
 		population = new Population(maxLength);
 		population.initialisePopulation();
-		for(int i = 0; i < o.length(); i++) {
-			if(!(o.charAt(i) == '0' || o.charAt(i) == '1')) {
+		for(int i = 0; i < optimum.length(); i++) {
+			if(!(optimum.charAt(i) == '0' || optimum.charAt(i) == '1')) {
 				throw new IllegalArgumentException("String may only contain 1 or 0");
 			}
 		}
@@ -46,6 +47,10 @@ public class GeneticAlgorithm {
 		
 	}
 	
+	/**
+	 * returns optimum string
+	 * @return optimum string
+	 */
 	public static String getOptimumString() {
 		if(GeneticAlgorithm.optimumString != null) {
 			return GeneticAlgorithm.optimumString;	
@@ -78,6 +83,10 @@ public class GeneticAlgorithm {
 		return index;
 	}
 	
+	/**
+	 * returns summaraised fitness of all individuals 
+	 * @return summarised fitness of all individuals
+	 */
 	public double getTotalFitness() {
 		double fitness = 0;
 		for(int i = 0; i < populationSize; i++) {
@@ -86,54 +95,73 @@ public class GeneticAlgorithm {
 		 return fitness;
 	}
 	
+	/**
+	 * evolve population by choosing individuals for new population and creating new 
+	 * individuals through crossover and mutation of individuals in next generation  
+	 */
 	public void evolvePopluation() {
 		
-		Population newPopulation = new Population(populationSize);
+		Population nextGeneration = new Population(populationSize);
 		
 		for(int i = 0; i < (1-crossoverrate)*populationSize; i++) {
 			
-			newPopulation.addIndividualToPopulation(population.getIndividualAtIndex(selectIndividual()));
+			nextGeneration.addIndividualToPopulation(population.getIndividualAtIndex(selectIndividual()));
 			
 		}
 		
 		for(int j = 0; j < crossoverrate*populationSize/2; j++) {
 			Individual individual1 = population.getIndividualAtIndex(selectIndividual());
 			Individual individual2 = population.getIndividualAtIndex(selectIndividual());
-			crossover(individual1, individual2, newPopulation);
+			crossover(individual1, individual2, nextGeneration);
 		}
 		
 		for(int h = 0; h < mutationrate*populationSize; h++) {
 			// mutate
 			int randomIndividual = (int)(Math.random()*populationSize);
-			mutate(newPopulation.getIndividualAtIndex(randomIndividual));
+			mutate(nextGeneration.getIndividualAtIndex(randomIndividual));
 			
 		}
 		
-		population = newPopulation;
+		population = nextGeneration;
 		
 	}
 	
+	/**
+	 * takes to individuals and recombines them through crossover
+	 * adds this recombined individuals to next generation of population
+	 * @param individual1 first individual for crossover
+	 * @param individual2 second individual for crossover
+	 * @param newPopulation next generation of population to which recombined individuals should be added
+	 */
 	private void crossover(Individual individual1, Individual individual2, Population newPopulation) {
 		String individ1 = individual1.getIndividualString();
 		String individ2 = individual2.getIndividualString();
 		
-		int factor = (individ1.length() < individ2.length())? individ1.length():individ2.length() ;
+		int randomIndex1 = (int)(Math.random()*individ1.length());
+		int randomIndex2 = (int)(Math.random()*individ2.length());
 		
-		int randomIndex = (int)(Math.random()*factor);
+		String recombinedString1 = individ1.substring(0, randomIndex1);
+		String temp = individ2.substring(randomIndex2);
+		recombinedString1 = recombinedString1.concat(temp);
 		
-		String recombinedString1 = individ1.substring(0, randomIndex).concat(individ2).substring(randomIndex);
-		String recombinedString2 = individ2.substring(0, randomIndex).concat(individ1).substring(randomIndex);
+		String recombinedString2 = individ2.substring(0, randomIndex2);
+		temp = individ1.substring(randomIndex1);
+		recombinedString2 = recombinedString2.concat(temp);
 		
 		newPopulation.addIndividualToPopulation(new Individual(recombinedString1));
 		newPopulation.addIndividualToPopulation(new Individual(recombinedString2));
 	}
 	
+	/**
+	 * takes an individual and randomly mutates one position of it's string
+	 * @param individual the individual which should be mutated  
+	 */
 	private void mutate(Individual individual) {
-		String individ = individual.getIndividualString();
+		String individualString = individual.getIndividualString();
 		
-		int randomIndex = (int)(Math.random()*individ.length());
+		int randomIndex = (int)(Math.random()*individualString.length());
 		
-		char[] temp = individ.toCharArray();
+		char[] temp = individualString.toCharArray();
 		
 		if(temp[randomIndex] == '0') {
 			temp[randomIndex] = '1';
@@ -147,19 +175,35 @@ public class GeneticAlgorithm {
 		
 	}
 	
+	/**
+	 * returns best fitness of individual in population
+	 * @return best fitness
+	 */
 	public double getBestFitness() {
 		return population.getBestFitness();
 	}
 	
+	/**
+	 * returns the string of the best individual in the population 
+	 * @return string of best individual in population
+	 */
 	public String getBestIndividualOfGeneration() {
 		Individual bestIndividual = population.getIndividualAtIndex(0);
 		return bestIndividual.getIndividualString();
 	}
 	
+	/**
+	 * returns fitness threshold, which is the length of optimum string
+	 * @return fitness threshold
+	 */
 	public double getFitnessThreshold() {
 		return GeneticAlgorithm.optimumString.length();
 	}
 	
+	/**
+	 * returns size of population
+	 * @return size of population
+	 */
 	public static int getPopulationSize() {
 		return populationSize;
 	}
