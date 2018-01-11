@@ -10,6 +10,9 @@ import static genetische_programmierung.Constants.minSizeOfThePrime;
  */
 public class VM {
 
+    static final int minSizeOfThePrime = 0;
+    static final int maxOperationPerVMSimulation = 10000;
+
     int MAX = 1000;
     final byte LOAD = 0;
     final byte PUSH = 1;
