@@ -2,12 +2,6 @@ package genetische_programmierung;
 
 import java.util.ArrayList;
 
-import static genetische_programmierung.Constants.maxOperationPerVMSimulation;
-import static genetische_programmierung.Constants.minSizeOfThePrime;
-
-/**
- * Created by minority on 02.11.16.
- */
 public class VM {
 
     static final int minSizeOfThePrime = 0;
@@ -68,7 +62,6 @@ public class VM {
         int pop = 0;
         int counter = 0;
         do {
-            //System.out.println("VM: sp= " + sp + " pc= " + pc);
             counter++;
             try {
                 switch (mem[pc] & 7) {
@@ -132,11 +125,8 @@ public class VM {
                     case JIH: {
                         //System.out.println("JIH");
                         if (reg > 0) {
-                            // TODO: infinite JIH if pop() = 0
                             pop = pop();
                             if (pop != 0 && ((pc + pop) > 0)) {
-                                //System.out.println("pc= " + pc + " pop= " + pop + " MAX= " + MAX );
-                                // TODO: ArrayIndexOutOfBoundException if reg + pop() = negative
                                 pc = ((pc + pop) % MAX);
                                 //System.out.println("new pc : " + pc);
                             }
@@ -155,30 +145,6 @@ public class VM {
         } while (pc < MAX && pc > 0 && counter < maxOperationPerVMSimulation && sp >= 0);
     }
 
-
-    // TODO: stack will be overwritten and is useless
-    public void printStack() {
-        //System.out.println("Stack: ");
-        for (int elem : stack) {
-            if (elem != 0) {
-                //System.out.println(elem);
-            }
-        }
-    }
-
-    // TODO: there are not enough prime numbers on the stack
-    // therefore we check after each push operation if prime and add this number to primeNumbers
-//    public int countPrimOnStack() {
-//        int counter = 0;
-//        for (int elem : stack) {
-//            if (isPrime(elem)) {
-//                if(addToPrimeNumbers(elem)){
-//                    counter++;
-//                }
-//            }
-//        }
-//        return counter;
-//    }
 
     // If the given elem is prime and not in primeNumbers add it
     private void addIfPrimeToPrimeNumbers(float elem) {

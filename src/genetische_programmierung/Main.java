@@ -116,13 +116,6 @@ public class Main {
 		}
 	}
 
-	static void optimize() {
-		for (int x = 0; x < mem.length * 0.1; x++) {
-			for (int y = 0; y < mem[x].length; y++) {
-				mem[x] = bestMem.clone();
-			}
-		}
-	}
 
 	/**
 	 * get the number of unique numbers
